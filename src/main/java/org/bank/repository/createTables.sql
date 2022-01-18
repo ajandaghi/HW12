@@ -26,11 +26,13 @@ create table if not exists customers(
 CREATE TYPE TransType As ENUM  ( 'Deposit', 'Withdraw', 'CardReceive', 'CardSend');
 create table if not exists transactions(
   id serial primary key,
+  transId Integer,
   amount bigint,
   transType TransType,
   customerId integer,
   desCustomerId integer,
-  dateTime TIMESTAMP
+  dateTime TIMESTAMP,
+  operatorId  Integer
   );
 
 create table if not exists cards (
@@ -47,6 +49,24 @@ create table if not exists branch (
    id serial primary key,
    branchNo varchar(5),
     branchName varchar(100),
-    address varchar(255)
+    address varchar(255),
+    bossStaffId  integer
     );
+
+CREATE TYPE StaffType As ENUM  ( 'Boss', 'Employee');
+create table if not exists staffs
+(
+    id        serial primary key,
+    staffId integer,
+    staffType StaffType,
+    branchNo  varchar(100)
+);
+
+
+
+
+
+
+
+
 
