@@ -5,7 +5,17 @@ private int id;
 private String branchNo;
 private String branchName;
 private String address;
-private int BossStaffId;
+private String BossStaffId;
+
+    public Branch(String branchId, String branchName, String address) {
+        this.branchNo = branchId;
+        this.branchName = branchName;
+        this.address = address;
+
+    }
+
+    public Branch() {
+    }
 
     public int getId() {
         return id;
@@ -39,11 +49,11 @@ private int BossStaffId;
         this.address = address;
     }
 
-    public int getBossStaffId() {
+    public String getBossStaffId() {
         return BossStaffId;
     }
 
-    public void setBossStaffId(int bossStaffId) {
+    public void setBossStaffId(String bossStaffId) {
         BossStaffId = bossStaffId;
     }
 }

@@ -10,6 +10,19 @@ public class Account {
     private int cardId;
     private boolean isEnable;
 
+    public Account() {
+    }
+
+    public Account(String accountNo, int customerId, int branchId, AccountType accountType, Long balance, boolean isEnable) {
+        this.accountNo = accountNo;
+        this.customerId = customerId;
+        this.branchId = branchId;
+        this.accountType = accountType;
+        this.balance = balance;
+        this.cardId = cardId;
+        this.isEnable = isEnable;
+    }
+
     public int getId() {
         return id;
     }

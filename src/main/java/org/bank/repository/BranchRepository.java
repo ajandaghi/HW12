@@ -1,15 +1,11 @@
 package org.bank.repository;
 
-import org.bank.entity.Account;
-import org.bank.entity.AccountType;
 import org.bank.entity.Branch;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BranchRepository {
     private Connection connection;
@@ -19,24 +15,27 @@ public class BranchRepository {
     }
 
     public void insert(Branch branch) throws SQLException {
-        String insertSql = "insert into branch (branchNo, branchName, address)" +
-                "values(?,?,?)";
+        String insertSql = "insert into branch (branchNo, branchName, address, bossStaffId)" +
+                "values(?,?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
         preparedStatement.setString(1, branch.getBranchNo());
         preparedStatement.setString(2, branch.getBranchName());
         preparedStatement.setString(3, branch.getAddress());
+        preparedStatement.setString(4, branch.getBossStaffId());
 
         preparedStatement.execute();
 
     }
     public void updateByBranchNo(String branchNo, Branch branch) throws SQLException {
         String updateSql="update  branch " +
-                "set branchName=?,  address=? where  branchNo=?" ;
+                "set branchName=?,  address=?, bossStaffId=? where  branchNo=?" ;
         PreparedStatement preparedStatement= connection.prepareStatement(updateSql);
 
         preparedStatement.setString(1,branch.getBranchName());
         preparedStatement.setString(2,branch.getAddress());
-        preparedStatement.setString(3,branch.getBranchNo());
+        preparedStatement.setString(3,branch.getBossStaffId());
+
+        preparedStatement.setString(4,branch.getBranchNo());
 
         preparedStatement.executeUpdate();
 
@@ -45,6 +44,8 @@ public class BranchRepository {
     public Branch selectByBranchNo(String branchNo) throws SQLException {
         String selectSql = "select * from branch where  branchNo=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setString(1,branchNo);
+
         ResultSet resultSet = preparedStatement.executeQuery();
         Branch branch = null;
         while (resultSet.next()) {
@@ -53,7 +54,7 @@ public class BranchRepository {
             branch.setBranchNo(resultSet.getString("branchNo"));
             branch.setBranchName(resultSet.getString("branchName"));
             branch.setAddress(resultSet.getString("address"));
-
+            branch.setBossStaffId(resultSet.getString("bossStaffId"));
 
 
         }

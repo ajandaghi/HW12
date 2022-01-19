@@ -12,9 +12,11 @@ create table if not exists account(
 
 );
 
-CREATE TYPE Gender AS ENUM ('male','female' );
+CREATE TYPE Gender AS ENUM ('Male','Female' );
 create table if not exists customers(
   id serial primary key,
+  userId varchar(50),
+  pass varchar(50),
   nationalId varchar(24),
   fullName varchar(255),
   gender   Gender,
@@ -38,7 +40,7 @@ create table if not exists transactions(
 create table if not exists cards (
   id serial primary key,
   accountId integer,
-  cardNo char(16),
+  cardNo char(19),
   cvv2   char(4),
   expDate  date,
   pass2  varchar(100),
@@ -50,14 +52,16 @@ create table if not exists branch (
    branchNo varchar(5),
     branchName varchar(100),
     address varchar(255),
-    bossStaffId  integer
+    bossStaffId  varchar(50)
     );
 
 CREATE TYPE StaffType As ENUM  ( 'Boss', 'Employee');
 create table if not exists staffs
 (
-    id        serial primary key,
-    staffId integer,
+    id    serial primary key,
+    fullName Varchar(256),
+    userId varchar(50),
+    pass varchar(50),
     staffType StaffType,
     branchNo  varchar(100)
 );

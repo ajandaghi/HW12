@@ -11,6 +11,18 @@ private Date expDate;
 private String pass2;
 private Boolean isEnable;
 
+    public Cards(int accountId, String cardNo, String cvv2, Date expDate, String pass2, Boolean isEnable) {
+        this.accountId = accountId;
+        this.cardNo = cardNo;
+        this.cvv2 = cvv2;
+        this.expDate = expDate;
+        this.pass2 = pass2;
+        this.isEnable = isEnable;
+    }
+
+    public Cards() {
+    }
+
     public int getId() {
         return id;
     }

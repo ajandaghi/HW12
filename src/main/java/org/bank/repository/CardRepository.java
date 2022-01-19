@@ -47,7 +47,7 @@ public class CardRepository {
 
     }
 
-    public Cards selectByCradNo(String cardNo) throws SQLException {
+    public Cards selectByCarddNo(String cardNo) throws SQLException {
         String selectSql = "select * from cards where  cardNo=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
         preparedStatement.setString(1,cardNo);
@@ -72,5 +72,18 @@ public class CardRepository {
         PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
         preparedStatement.setString(1,cardNo);
         preparedStatement.executeUpdate();
+    }
+
+    public int searchCardByAccountId(int accountId) throws SQLException {
+        String select ="select count(*) from cards where accountId=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(select);
+        preparedStatement.setInt(1,accountId);
+        ResultSet resultSet=preparedStatement.executeQuery();
+        if(resultSet.next()){
+            return resultSet.getInt(1);
+        }
+
+         return-1;
+
     }
 }

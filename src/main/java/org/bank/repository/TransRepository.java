@@ -21,7 +21,7 @@ public class TransRepository {
 
     public void insert(Transactions transactions) throws SQLException {
         String insertSql = "insert into transactions ( transId,amount,transType, customerId, desCustomerId, dateTime, operatorId)" +
-                "values(?,?,?,?,?,?,?)";
+                "values(?,?,?::transType,?,?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
         preparedStatement.setInt(1,transactions.getTransId());
         preparedStatement.setLong(2, transactions.getAmount());
@@ -38,7 +38,7 @@ public class TransRepository {
     }
     public void updateByTransId(int transId, Transactions transactions) throws SQLException {
         String updateSql="update  transactions " +
-                "set amount=?,  transType=? , customerId=?, desCustomerId=?, dateTime=?, operatorId=? where transId=? ";
+                "set amount=?,  transType=?::transType , customerId=?, desCustomerId=?, dateTime=?, operatorId=? where transId=? ";
         PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
         preparedStatement.setLong(1, transactions.getAmount());
         preparedStatement.setString(2, transactions.getTransType().toString());

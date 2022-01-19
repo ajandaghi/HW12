@@ -1,16 +1,21 @@
 package org.bank.entity;
 
 public class Staffs {
-    private int staffId;
+    private String user;
+    private String fullName;
+    private String pass;
     private StaffType staffType;
     private String branchNo;
 
-    public int getStaffId() {
-        return staffId;
+    public Staffs(String user, String fullName, String pass, StaffType staffType, String branchNo) {
+        this.user = user;
+        this.fullName = fullName;
+        this.pass = pass;
+        this.staffType = staffType;
+        this.branchNo = branchNo;
     }
 
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
+    public Staffs() {
     }
 
     public StaffType getStaffType() {
@@ -27,5 +32,31 @@ public class Staffs {
 
     public void setBranchNo(String branchNo) {
         this.branchNo = branchNo;
+    }
+
+
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
     }
 }

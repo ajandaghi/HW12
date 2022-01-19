@@ -5,11 +5,25 @@ import java.util.List;
 
 public class Customers {
     private int Id;
+    private String user;
+    private String pass;
     private String nationalId;
     private String fullName;
     private Gender gender;
     private String address;
     //private List<Account> accounts = new ArrayList<>();
+
+    public Customers(String user, String pass, String nationalId, String fullName, Gender gender, String address) {
+        this.user = user;
+        this.pass = pass;
+        this.nationalId = nationalId;
+        this.fullName = fullName;
+        this.gender = gender;
+        this.address = address;
+    }
+
+    public Customers() {
+    }
 
     public int getId() {
         return Id;
@@ -51,5 +65,19 @@ public class Customers {
         this.address = address;
     }
 
+    public String getUser() {
+        return user;
+    }
 
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
 }

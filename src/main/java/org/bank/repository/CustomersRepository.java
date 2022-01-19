@@ -18,27 +18,34 @@ public class CustomersRepository {
         this.connection = connection;
     }
     public void insert(Customers customers) throws SQLException {
-        String insertSql = "insert into customers (nationalId, fullName, gender, address)" +
-                "values(?,?,?,?)";
+        String insertSql = "insert into customers (userId, pass, nationalId, fullName, gender, address)" +
+                "values(?,?,?,?,?::gender,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
-        preparedStatement.setString(1, customers.getNationalId());
-        preparedStatement.setString(2, customers.getFullName());
-        preparedStatement.setString(3, customers.getGender().toString());
-        preparedStatement.setString(4, customers.getAddress());
+        preparedStatement.setString(1, customers.getUser());
+        preparedStatement.setString(2, customers.getPass());
+
+        preparedStatement.setString(3, customers.getNationalId());
+        preparedStatement.setString(4, customers.getFullName());
+        preparedStatement.setString(5, customers.getGender().name());
+        preparedStatement.setString(6, customers.getAddress());
 
 
 
         preparedStatement.execute();
 
     }
-    public void updateByNid(String nationalId, Customers customers) throws SQLException {
+    public void updateByUser(String user, Customers customers) throws SQLException {
         String updateSql="update  customers " +
-                "set  fullName=? , gender=?, address=? where nationalId=? ";
+                "set  fullName=? , gender=?::gender, address=?, nationalId=?, pass=? where userId=? ";
         PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
         preparedStatement.setString(1, customers.getFullName());
         preparedStatement.setString(2, customers.getGender().toString());
         preparedStatement.setString(3, customers.getAddress());
         preparedStatement.setString(4, customers.getNationalId());
+        preparedStatement.setString(5, customers.getPass());
+
+        preparedStatement.setString(6, customers.getUser());
+
 
 
 
@@ -47,16 +54,19 @@ public class CustomersRepository {
 
     }
 
-    public Customers selectByNid(String natinalId) throws SQLException {
-        String selectSql = "select * from customers where  natinalId=?";
+    public Customers selectByUser(String user) throws SQLException {
+        String selectSql = "select * from customers where  userId=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        preparedStatement.setString(1,natinalId);
+        preparedStatement.setString(1,user);
         ResultSet resultSet = preparedStatement.executeQuery();
         Customers customer = null;
         while (resultSet.next()) {
            customer = new Customers();
 
             customer.setId(resultSet.getInt("id"));
+            customer.setUser(resultSet.getString("userId"));
+            customer.setPass(resultSet.getString("pass"));
+
             customer.setNationalId(resultSet.getString("nationalId"));
             customer.setFullName(resultSet.getString("fullName"));
             customer.setGender(Gender.valueOf(resultSet.getString("gender")));
@@ -67,10 +77,21 @@ public class CustomersRepository {
         return customer;
     }
 
-    public void deleteByNid(String natinalId) throws SQLException {
-        String deleteSql = "delete from customers where  natinalId=?";
+    public void deleteByUser(String user) throws SQLException {
+        String deleteSql = "delete from customers where  userId=?";
         PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
-        preparedStatement.setString(1,natinalId);
+        preparedStatement.setString(1,user);
         preparedStatement.executeUpdate();
+    }
+
+    public int getLastId() throws SQLException {
+        String selectSql = "select count(*) from customers";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        int num=0;
+        if(resultSet.next()){
+            num=resultSet.getInt(1);
+        }
+        return  num;
     }
 }

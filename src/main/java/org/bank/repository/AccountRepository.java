@@ -20,7 +20,7 @@ public class AccountRepository {
 
     public void insert(Account account) throws SQLException {
         String insertSql = "insert into account (accountNo, customerId, branchId, accountType, balance, cardId, isEnable)" +
-                "values(?,?,?,?,?,?,?)";
+                "values(?,?,?,?::accountType,?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
         preparedStatement.setString(1, account.getAccountNo());
         preparedStatement.setInt(2, account.getCustomerId());
@@ -34,7 +34,7 @@ public class AccountRepository {
     }
     public void updateByAccountNo(String accountNo, Account account) throws SQLException {
         String updateSql="update  account set customerId=?, " +
-                " branchId=?,  accountType=?,  balance=?,  cardId=?,  isEnable=? where  accountNo=?" ;
+                " branchId=?,  accountType=?::accountType,  balance=?,  cardId=?,  isEnable=? where  accountNo=?" ;
         PreparedStatement preparedStatement= connection.prepareStatement(updateSql);
 
         preparedStatement.setInt(1,account.getCustomerId());
@@ -51,11 +51,13 @@ public class AccountRepository {
     public Account selectByAccountNo(String accountNo) throws SQLException {
         String selectSql = "select * from account where  accountNo=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setString(1,accountNo);
+
         ResultSet resultSet = preparedStatement.executeQuery();
         Account account = null;
         while (resultSet.next()) {
            account = new Account();
-
+            account.setId(resultSet.getInt("id"));
             account.setAccountNo(resultSet.getString("AccountNo"));
             account.setCustomerId(resultSet.getInt("customerId"));
             account.setBranchId(resultSet.getInt("branchId"));
