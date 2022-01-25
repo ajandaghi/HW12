@@ -170,7 +170,7 @@ public class ConsoleMenus {
             case "2":
                 System.out.println("enter: user/pass/fullName/branchNo");
                 cmd=scanner.nextLine().split("/");
-                staffsActions.addEmployee(cmd[0],cmd[1],cmd[2],cmd[3]);
+                staffsActions.addEmployee(cmd[0],cmd[1],cmd[2],branchService.getBranchId(cmd[3]));
                 showAdminMenu();
                 break;
 
