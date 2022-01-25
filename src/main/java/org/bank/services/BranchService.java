@@ -17,4 +17,8 @@ public class BranchService {
     public int getBranchId(String branchNo) throws SQLException {
         return branchRepository.selectByBranchNo(branchNo).getId();
     }
+
+    public String getBranchNo(int branchId) throws SQLException {
+        return branchRepository.selectByBranchId(branchId).getBranchNo();
+    }
 }

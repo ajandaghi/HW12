@@ -1,6 +1,7 @@
 package org.bank.entity;
 
 public class Staffs {
+    private int id;
     private String user;
     private String fullName;
     private String pass;
@@ -16,6 +17,14 @@ public class Staffs {
     }
 
     public Staffs() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public StaffType getStaffType() {

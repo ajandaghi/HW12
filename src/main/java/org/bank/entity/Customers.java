@@ -11,15 +11,17 @@ public class Customers {
     private String fullName;
     private Gender gender;
     private String address;
+    private Boolean isEnable;
     //private List<Account> accounts = new ArrayList<>();
 
-    public Customers(String user, String pass, String nationalId, String fullName, Gender gender, String address) {
+    public Customers(String user, String pass, String nationalId, String fullName, Gender gender, String address, Boolean isEnable) {
         this.user = user;
         this.pass = pass;
         this.nationalId = nationalId;
         this.fullName = fullName;
         this.gender = gender;
         this.address = address;
+        this.isEnable=isEnable;
     }
 
     public Customers() {
@@ -79,5 +81,13 @@ public class Customers {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public Boolean getEnable() {
+        return isEnable;
+    }
+
+    public void setEnable(Boolean enable) {
+        isEnable = enable;
     }
 }

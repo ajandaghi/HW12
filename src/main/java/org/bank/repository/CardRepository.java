@@ -47,7 +47,7 @@ public class CardRepository {
 
     }
 
-    public Cards selectByCarddNo(String cardNo) throws SQLException {
+    public Cards selectByCardNo(String cardNo) throws SQLException {
         String selectSql = "select * from cards where  cardNo=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
         preparedStatement.setString(1,cardNo);
@@ -85,5 +85,46 @@ public class CardRepository {
 
          return-1;
 
+    }
+
+    public Cards selectByAccountId(int accountId) throws SQLException {
+        String selectSql = "select * from cards where  accountId=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setInt(1,accountId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        Cards  card =null;
+        while (resultSet.next()) {
+            card = new Cards();
+
+            card.setId(resultSet.getInt("id"));
+            card.setCardNo(resultSet.getString("cardNo"));
+            card.setAccountId(resultSet.getInt("accountId"));
+            card.setCvv2(resultSet.getString("cvv2"));
+            card.setExpDate(resultSet.getDate("expDate"));
+            card.setPass2(resultSet.getString("pass2"));
+            card.setEnable(resultSet.getBoolean("isEnable"));
+
+        }
+        return card;
+    }
+
+    public Cards selectByCardId(int cardId) throws SQLException {
+        String selectSql = "select * from cards where  cardId=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setInt(1,cardId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        Cards card = null;
+        while (resultSet.next()) {
+            card = new Cards();
+
+            card.setId(resultSet.getInt("id"));
+            card.setCardNo(resultSet.getString("cardNo"));
+            card.setAccountId(resultSet.getInt("accountId"));
+            card.setCvv2(resultSet.getString("cvv2"));
+            card.setExpDate(resultSet.getDate("expDate"));
+            card.setPass2(resultSet.getString("pass2"));
+            card.setEnable(resultSet.getBoolean("isEnable"));
+        }
+        return card;
     }
 }

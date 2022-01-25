@@ -30,7 +30,7 @@ public class StaffsRepository {
         preparedStatement.execute();
     }
 
-    public void updateByStaffId(String user, Staffs staffs) throws SQLException {
+    public void updateByStaffUser(String user, Staffs staffs) throws SQLException {
         String updateSql = "update  staffs set " +
                 "fullName=?, pass=?, staffType=?::staffType, branchNo=? where  userId=?";
         PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
@@ -76,6 +76,26 @@ public class StaffsRepository {
             num=resultSet.getInt(1);
         }
         return  num;
+    }
+
+    public Staffs selectBranchBoss(String  branchNo) throws SQLException {
+        String selectSql = "select * from staffs where  branchNo=? and staffType=?::staffType";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setString(1,branchNo);
+        preparedStatement.setString(2,"Boss");
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        Staffs staffs = null;
+        while (resultSet.next()) {
+            staffs = new Staffs();
+            staffs.setUser(resultSet.getString("userId"));
+            staffs.setPass(resultSet.getString("pass"));
+            staffs.setFullName(resultSet.getString("fullName"));
+            staffs.setStaffType(StaffType.valueOf(resultSet.getString("staffType")));
+            staffs.setBranchNo(resultSet.getString("branchNo"));
+
+        }
+        return staffs;
     }
 
 }

@@ -3,12 +3,11 @@ CREATE TYPE AccountType AS ENUM ('Saving', 'Current', 'LongInvestment', 'ShortIn
 create table if not exists account(
     id serial primary key,
     accountNo varchar(24),
-    customerId integer,
+    accountId integer,
     branchId integer,
     accountType AccountType ,
     balance bigint,
-    cardId integer,
-    isEnable boolean
+    cardId integer
 
 );
 
@@ -20,21 +19,23 @@ create table if not exists customers(
   nationalId varchar(24),
   fullName varchar(255),
   gender   Gender,
-  address varchar(255)
+  address varchar(255),
+  isEnable boolean
+
 
 
 );
 
-CREATE TYPE TransType As ENUM  ( 'Deposit', 'Withdraw', 'CardReceive', 'CardSend');
+CREATE TYPE TransType As ENUM  ( 'Deposit', 'Withdraw', 'CardtoCard');
 create table if not exists transactions(
   id serial primary key,
-  transId Integer,
+
   amount bigint,
   transType TransType,
-  customerId integer,
-  desCustomerId integer,
+  accountId integer,
+  desAccountId integer,
   dateTime TIMESTAMP,
-  operatorId  Integer
+  operator  varchar(100)
   );
 
 create table if not exists cards (

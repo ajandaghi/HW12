@@ -8,19 +8,17 @@ public class Account {
     private AccountType accountType;
     private Long balance;
     private int cardId;
-    private boolean isEnable;
 
     public Account() {
     }
 
-    public Account(String accountNo, int customerId, int branchId, AccountType accountType, Long balance, boolean isEnable) {
+    public Account(String accountNo, int customerId, int branchId, AccountType accountType, Long balance, int cardId) {
         this.accountNo = accountNo;
         this.customerId = customerId;
         this.branchId = branchId;
         this.accountType = accountType;
         this.balance = balance;
         this.cardId = cardId;
-        this.isEnable = isEnable;
     }
 
     public int getId() {
@@ -79,11 +77,16 @@ public class Account {
         this.cardId = cardId;
     }
 
-    public boolean isEnable() {
-        return isEnable;
-    }
-
-    public void setEnable(boolean enable) {
-        isEnable = enable;
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", accountNo='" + accountNo + '\'' +
+                ", customerId=" + customerId +
+                ", branchId=" + branchId +
+                ", accountType=" + accountType +
+                ", balance=" + balance +
+                ", cardId=" + cardId +
+                '}';
     }
 }

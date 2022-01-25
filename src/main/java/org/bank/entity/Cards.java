@@ -78,4 +78,17 @@ private Boolean isEnable;
     public void setEnable(Boolean enable) {
         isEnable = enable;
     }
+
+    @Override
+    public String toString() {
+        return "Cards{" +
+                "id=" + id +
+                ", accountId=" + accountId +
+                ", cardNo='" + cardNo + '\'' +
+                ", cvv2='" + cvv2 + '\'' +
+                ", expDate=" + expDate +
+                ", pass2='" + pass2 + '\'' +
+                ", isEnable=" + isEnable +
+                '}';
+    }
 }

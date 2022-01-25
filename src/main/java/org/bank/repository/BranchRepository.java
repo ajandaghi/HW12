@@ -50,7 +50,7 @@ public class BranchRepository {
         Branch branch = null;
         while (resultSet.next()) {
              branch = new Branch();
-
+             branch.setId(resultSet.getInt("id"));
             branch.setBranchNo(resultSet.getString("branchNo"));
             branch.setBranchName(resultSet.getString("branchName"));
             branch.setAddress(resultSet.getString("address"));
@@ -66,5 +66,25 @@ public class BranchRepository {
         PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
         preparedStatement.setString(1,branchNo);
         preparedStatement.executeUpdate();
+    }
+
+    public Branch selectByBranchId(int branchId) throws SQLException {
+        String selectSql = "select * from branch where  branchNo=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setInt(1, branchId);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        Branch branch = null;
+        while (resultSet.next()) {
+            branch = new Branch();
+            branch.setId(resultSet.getInt("id"));
+            branch.setBranchNo(resultSet.getString("branchNo"));
+            branch.setBranchName(resultSet.getString("branchName"));
+            branch.setAddress(resultSet.getString("address"));
+            branch.setBossStaffId(resultSet.getString("bossStaffId"));
+
+
+        }
+        return branch;
     }
 }

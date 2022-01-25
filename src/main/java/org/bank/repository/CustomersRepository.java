@@ -18,8 +18,8 @@ public class CustomersRepository {
         this.connection = connection;
     }
     public void insert(Customers customers) throws SQLException {
-        String insertSql = "insert into customers (userId, pass, nationalId, fullName, gender, address)" +
-                "values(?,?,?,?,?::gender,?)";
+        String insertSql = "insert into customers (userId, pass, nationalId, fullName, gender, address, isEnable)" +
+                "values(?,?,?,?,?::gender,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
         preparedStatement.setString(1, customers.getUser());
         preparedStatement.setString(2, customers.getPass());
@@ -28,6 +28,7 @@ public class CustomersRepository {
         preparedStatement.setString(4, customers.getFullName());
         preparedStatement.setString(5, customers.getGender().name());
         preparedStatement.setString(6, customers.getAddress());
+        preparedStatement.setBoolean(7, customers.getEnable());
 
 
 
@@ -36,16 +37,16 @@ public class CustomersRepository {
     }
     public void updateByUser(String user, Customers customers) throws SQLException {
         String updateSql="update  customers " +
-                "set  fullName=? , gender=?::gender, address=?, nationalId=?, pass=? where userId=? ";
+                "set  fullName=? , gender=?::gender, address=?, nationalId=?, pass=? , isEnable=? where userId=? ";
         PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
         preparedStatement.setString(1, customers.getFullName());
         preparedStatement.setString(2, customers.getGender().toString());
         preparedStatement.setString(3, customers.getAddress());
         preparedStatement.setString(4, customers.getNationalId());
         preparedStatement.setString(5, customers.getPass());
+        preparedStatement.setBoolean(6, customers.getEnable());
 
-        preparedStatement.setString(6, customers.getUser());
-
+        preparedStatement.setString(7, user);
 
 
 
@@ -71,7 +72,7 @@ public class CustomersRepository {
             customer.setFullName(resultSet.getString("fullName"));
             customer.setGender(Gender.valueOf(resultSet.getString("gender")));
             customer.setAddress(resultSet.getString("address"));
-
+            customer.setEnable(resultSet.getBoolean("isEnable"));
 
         }
         return customer;
@@ -92,6 +93,30 @@ public class CustomersRepository {
         if(resultSet.next()){
             num=resultSet.getInt(1);
         }
-        return  num;
+        return  num+1;
+    }
+
+    public Customers selectByCustomerId(int customerId) throws SQLException {
+        String selectSql = "select * from customers where  Id=?";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setInt(1,customerId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        Customers customer = null;
+        while (resultSet.next()) {
+            customer = new Customers();
+
+            customer.setId(resultSet.getInt("id"));
+            customer.setUser(resultSet.getString("userId"));
+            customer.setPass(resultSet.getString("pass"));
+
+            customer.setNationalId(resultSet.getString("nationalId"));
+            customer.setFullName(resultSet.getString("fullName"));
+            customer.setGender(Gender.valueOf(resultSet.getString("gender")));
+            customer.setAddress(resultSet.getString("address"));
+            customer.setEnable(resultSet.getBoolean("isEnable"));
+
+
+        }
+        return customer;
     }
 }

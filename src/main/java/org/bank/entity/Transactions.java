@@ -4,13 +4,25 @@ import java.sql.Timestamp;
 
 public class Transactions {
     private int id;
-    private int transId;
+   // private int transId;
     private Long amount;
     private TransType transType;
-    private int customerId;
-    private int desCustomerId;
+    private int accountId;
+    private int desAccountId;
     private Timestamp dateTime;
-    private int operatorId;
+    private String operator;
+
+    public Transactions(Long amount, TransType transType, int customerId, int desCustomerId, Timestamp dateTime, String operatorId) {
+        this.amount = amount;
+        this.transType = transType;
+        this.accountId = customerId;
+        this.desAccountId = desCustomerId;
+        this.dateTime = dateTime;
+        this.operator = operatorId;
+    }
+
+    public Transactions() {
+    }
 
     public int getId() {
         return id;
@@ -36,20 +48,20 @@ public class Transactions {
         this.transType = transType;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public int getAccountId() {
+        return accountId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setAccountId(int accountId) {
+        this.accountId = accountId;
     }
 
-    public int getDesCustomerId() {
-        return desCustomerId;
+    public int getDesAccountId() {
+        return desAccountId;
     }
 
-    public void setDesCustomerId(int desCustomerId) {
-        this.desCustomerId = desCustomerId;
+    public void setDesAccountId(int desAccountId) {
+        this.desAccountId = desAccountId;
     }
 
     public Timestamp getDateTime() {
@@ -60,20 +72,24 @@ public class Transactions {
         this.dateTime = dateTime;
     }
 
-    public int getOperatorId() {
-        return operatorId;
+    public String getOperator() {
+        return operator;
     }
 
-    public void setOperatorId(int operatorId) {
-        this.operatorId = operatorId;
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
-    public int getTransId() {
-        return transId;
+    @Override
+    public String toString() {
+        return "Transactions{" +
+                "id=" + id +
+                ", amount=" + amount +
+                ", transType=" + transType +
+                ", accountId=" + accountId +
+                ", desAccountId=" + desAccountId +
+                ", dateTime=" + dateTime +
+                ", operator='" + operator + '\'' +
+                '}';
     }
-
-    public void setTransId(int transId) {
-        this.transId = transId;
-    }
-
 }

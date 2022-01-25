@@ -1,14 +1,9 @@
 package org.bank.repository;
 
-import org.bank.entity.Customers;
-import org.bank.entity.Gender;
 import org.bank.entity.TransType;
 import org.bank.entity.Transactions;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +15,16 @@ public class TransRepository {
     }
 
     public void insert(Transactions transactions) throws SQLException {
-        String insertSql = "insert into transactions ( transId,amount,transType, customerId, desCustomerId, dateTime, operatorId)" +
-                "values(?,?,?::transType,?,?,?,?)";
+        String insertSql = "insert into transactions ( amount,transType, accountId, desAccountId, dateTime, operator)" +
+                "values(?,?::transType,?,?,?,?)";
         PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
-        preparedStatement.setInt(1,transactions.getTransId());
-        preparedStatement.setLong(2, transactions.getAmount());
-        preparedStatement.setString(3, transactions.getTransType().toString());
-        preparedStatement.setInt(4, transactions.getCustomerId());
-        preparedStatement.setInt(5, transactions.getDesCustomerId());
-        preparedStatement.setTimestamp(6, transactions.getDateTime());
-        preparedStatement.setInt(7, transactions.getOperatorId());
+
+        preparedStatement.setLong(1, transactions.getAmount());
+        preparedStatement.setString(2, transactions.getTransType().toString());
+        preparedStatement.setInt(3, transactions.getAccountId());
+        preparedStatement.setInt(4, transactions.getDesAccountId());
+        preparedStatement.setTimestamp(5, transactions.getDateTime());
+        preparedStatement.setString(6, transactions.getOperator());
 
 
 
@@ -42,10 +37,10 @@ public class TransRepository {
         PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
         preparedStatement.setLong(1, transactions.getAmount());
         preparedStatement.setString(2, transactions.getTransType().toString());
-        preparedStatement.setInt(3, transactions.getCustomerId());
-        preparedStatement.setInt(4, transactions.getDesCustomerId());
+        preparedStatement.setInt(3, transactions.getAccountId());
+        preparedStatement.setInt(4, transactions.getDesAccountId());
         preparedStatement.setTimestamp(5,transactions.getDateTime());
-        preparedStatement.setInt(6,transactions.getOperatorId());
+        preparedStatement.setString(6,transactions.getOperator());
         preparedStatement.setInt(7,transId);
 
 
@@ -53,28 +48,7 @@ public class TransRepository {
 
     }
 
-    public Transactions selectByTransId(String transId) throws SQLException {
-        String selectSql = "select * from transactions where  transId=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        preparedStatement.setString(1,transId);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        Transactions transactions = null;
-        while (resultSet.next()) {
-            transactions = new Transactions();
 
-            transactions.setId(resultSet.getInt("id"));
-            transactions.setTransId(resultSet.getInt("transId"));
-            transactions.setAmount(resultSet.getLong("amount"));
-            transactions.setTransType(TransType.valueOf(resultSet.getString("transType")));
-            transactions.setCustomerId(resultSet.getInt("customerId"));
-            transactions.setDesCustomerId(resultSet.getInt("desCustomerId"));
-            transactions.setDateTime(resultSet.getTimestamp("dateTime"));
-            transactions.setOperatorId(resultSet.getInt("operatorId"));
-
-
-       }
-        return transactions;
-    }
 
     public void deleteByTransId(String transId) throws SQLException {
         String deleteSql = "delete from transactions where  natinalId=?";
@@ -82,4 +56,31 @@ public class TransRepository {
         preparedStatement.setString(1,transId);
         preparedStatement.executeUpdate();
     }
+
+    public List<Transactions> searchByDateAndAccountId(int acountId,Timestamp timestamp) throws SQLException {
+        String selectSql = "select * from transactions where  dateTime>? and (accountId=? or desAccountId=?) ";
+        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+        preparedStatement.setTimestamp(1,timestamp);
+        preparedStatement.setInt(2,acountId);
+        preparedStatement.setInt(3,acountId);
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        List<Transactions> transactions = new ArrayList<>();
+        while (resultSet.next()) {
+            Transactions transaction = new Transactions();
+
+            transaction.setId(resultSet.getInt("id"));
+            transaction.setAmount(resultSet.getLong("amount"));
+            transaction.setTransType(TransType.valueOf(resultSet.getString("transType")));
+            transaction.setAccountId(resultSet.getInt("accountId"));
+            transaction.setDesAccountId(resultSet.getInt("desAccountId"));
+            transaction.setDateTime(resultSet.getTimestamp("dateTime"));
+            transaction.setOperator(resultSet.getString("operatorId"));
+
+            transactions.add(transaction);
+        }
+        return transactions;
+    }
+
+
 }
