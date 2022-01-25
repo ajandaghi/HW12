@@ -69,7 +69,7 @@ public class BranchRepository {
     }
 
     public Branch selectByBranchId(int branchId) throws SQLException {
-        String selectSql = "select * from branch where  branchNo=?";
+        String selectSql = "select * from branch where  id=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
         preparedStatement.setInt(1, branchId);
 

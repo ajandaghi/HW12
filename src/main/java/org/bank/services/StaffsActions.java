@@ -27,48 +27,64 @@ public class StaffsActions
         customerService=new CustomerService();
     }
 
-    public void addBranchBoss(String user, String pass, String fullName, String branchNo ) throws SQLException {
+    public void addBranchBoss(String user,String branchNo ) throws SQLException {
+        if(getBranchIdByUser(user)!=branchRepository.selectByBranchNo(branchNo).getId()){
+            System.out.println("this user doesn't work at branchNo: "+branchNo);
+            return;
+        }
         if(staffsRepository.selectByUser(user)==null && branchRepository.selectByBranchNo(branchNo)!=null) {
-            staffsRepository.insert(new Staffs(user, fullName, pass, StaffType.Boss, branchNo));
-            Branch nBranch = branchRepository.selectByBranchNo(branchNo);
-            nBranch.setBossStaffId(user);
-            branchRepository.updateByBranchNo(branchNo, nBranch);
-            System.out.println("branch boss added!");
+            System.out.println("user not exit. at first create a staff");
+            return;
         }
         else if(staffsRepository.selectByUser(user)!=null){
-           Staffs staffs= staffsRepository.selectByUser(staffsRepository.selectBranchBoss(branchNo).getUser());
-           staffs.setStaffType(StaffType.Employee);
-           staffsRepository.updateByStaffUser(user,staffs);
+            if(staffsRepository.selectBranchBoss(branchNo)!=null) {
+                Staffs boss = staffsRepository.selectBranchBoss(branchNo);
+                boss.setStaffType(StaffType.Employee);
+                staffsRepository.updateByStaffUser(boss.getUser(), boss);
+                System.out.println("branch boss changed!");
+            }
 
-            staffsRepository.updateByStaffUser(user,new Staffs(user, fullName, pass, StaffType.Boss, branchNo));
+            Staffs staffs =staffsRepository.selectByUser(user);
+            staffs.setStaffType(StaffType.Boss);
+            staffsRepository.updateByStaffUser(user,staffs);
+            System.out.println("new boss added!");
+
             Branch nBranch = branchRepository.selectByBranchNo(branchNo);
             nBranch.setBossStaffId(user);
             branchRepository.updateByBranchNo(branchNo, nBranch);
-            System.out.println("branch boss changed!");
 
 
         }
-            else
+        else
         System.out.println("branch not exist");
 }
 
 public void addBranch(String branchNo, String branchName, String address) throws SQLException {
-   if(branchRepository.selectByBranchNo(branchNo)==null)
-       branchRepository.insert(new Branch(branchNo,branchName,address));
+   if(branchRepository.selectByBranchNo(branchNo)==null) {
+       branchRepository.insert(new Branch(branchNo, branchName, address));
+       System.out.println("branch added");
+   }
    else
        System.out.println("This Branch Already Exists!");
 }
 
-public void addEmployee(String user, String pass, String fullName, String branchNo) throws SQLException {
-    if(staffsRepository.selectByUser(user)==null && branchRepository.selectByBranchNo(branchNo)!=null) {
-        staffsRepository.insert(new Staffs(user, fullName, pass, StaffType.Employee, branchNo));
+public void addEmployee(String user, String pass, String fullName, int branchId) throws SQLException, ClassNotFoundException {
+    if(staffsRepository.selectByUser(user)==null && branchRepository.selectByBranchId(branchId)!=null) {
+        staffsRepository.insert(new Staffs(user, fullName, pass, StaffType.Employee, branchRepository.selectByBranchId(branchId).getBranchNo() ));
         System.out.println("branch employee added!");
     }
     else
         System.out.println("user not exist or branch before added");
 }
 
-
+    public void addEmployee(String user, String pass, String fullName, String staffUser) throws SQLException, ClassNotFoundException {
+        if(staffsRepository.selectByUser(user)==null && branchRepository.selectByBranchId(getBranchIdByUser(staffUser))!=null) {
+            staffsRepository.insert(new Staffs(user, fullName, pass, StaffType.Employee,branchRepository.selectByBranchId(getBranchIdByUser(staffUser) ).getBranchNo()));
+            System.out.println("branch employee added!");
+        }
+        else
+            System.out.println("user not exist or branch before added");
+    }
 
     public Boolean adminLogin(String user, String pass) {
         if (user.equals("admin")&& pass.equals("admin")){
@@ -82,17 +98,22 @@ public void addEmployee(String user, String pass, String fullName, String branch
             if(staffsRepository.selectByUser(user).getUser().equals(user)&& staffsRepository.selectByUser(user).getPass().equals(pass)){
                 return staffsRepository.selectByUser(user).getStaffType();
             }
-            else
-                System.out.println("wrong credential");
         }
         else
             System.out.println("not such user");
 
-        return null;
+        return  null;
+
+
     }
 
     public int getBranchIdByUser(String user) throws SQLException {
-        return staffsRepository.selectByUser(user).getId();
+        if(branchRepository.selectByBranchNo(staffsRepository.selectByUser(user).getBranchNo())!=null)
+        return branchRepository.selectByBranchNo(staffsRepository.selectByUser(user).getBranchNo()).getId();
+        else
+        System.out.println("not such user found");
+        return -1;
+
     }
 
 

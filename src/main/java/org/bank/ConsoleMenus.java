@@ -37,7 +37,7 @@ public class ConsoleMenus {
 
         switch (input){
             case "-1":
-                return;
+                System.exit(1000);
             case "1":
                 showLoginMenu();
                 break;
@@ -76,7 +76,7 @@ public class ConsoleMenus {
                     showAdminMenu();
                 } else {
                     System.out.println("wrong credential");
-                    login(input);                }
+                    showLoginMenu();               }
                 break;
             case "2":
                 System.out.println("enter user:");
@@ -84,17 +84,19 @@ public class ConsoleMenus {
                 System.out.println("enter pass:");
                 pass=scanner.nextLine();
 
-                if(staffsActions.login(user,pass).equals(StaffType.Boss)){
-                    showBossMenu(user);
-                } else if(staffsActions.login(user,pass).equals(StaffType.Employee)) {
-                    System.out.println(staffsActions.login(user,pass));
-                    showAccountMenu(user);
-                }else{
+                if(staffsActions.login(user,pass)!=null) {
+                    if (staffsActions.login(user, pass).equals(StaffType.Boss)) {
+                        showBossMenu(user);
+                    } else if (staffsActions.login(user, pass).equals(StaffType.Employee)) {
 
-                    System.out.println("wrong credential");
-                    login(input);
+                        showAccountMenu(user);
+                    } else {
+
+                        System.out.println("wrong credential");
+                        showLoginMenu();
+                    }
                 }
-
+                showLoginMenu();
 
                 break;
 
@@ -107,9 +109,12 @@ public class ConsoleMenus {
                 if(customerService.CustomerLogin(user,pass)){
                     showCardMenu(user);
                 }else {
-                    login(input);
+                    showLoginMenu();
                 }
-
+            break;
+            default:
+                System.out.println("wrong input");
+                showLoginMenu();
 
 
         }
@@ -128,10 +133,10 @@ public class ConsoleMenus {
                 showLoginMenu();
                 break;
             case "1":
-                System.out.println("enter: user/pass/fullName/branchNo");
+                System.out.println("enter: user/pass/fullName");
                String[] cmd=scanner.nextLine().split("/");
-                staffsActions.addEmployee(cmd[0],cmd[1],cmd[2],cmd[3]);
-                showAdminMenu();
+                staffsActions.addEmployee(cmd[0],cmd[1],cmd[2],staffsActions.getBranchIdByUser(user));
+                showAccountMenu(user);
                 break;
 
             case "2":
@@ -170,21 +175,23 @@ public class ConsoleMenus {
                 break;
 
             case "3":
-                System.out.println("enter: user/pass/fullName/branchNo");
+                System.out.println("enter: user/branchNo");
                 cmd=scanner.nextLine().split("/");
-                staffsActions.addBranchBoss(cmd[0],cmd[1],cmd[2],cmd[3]);
+                staffsActions.addBranchBoss(cmd[0],cmd[1]);
                 showAdminMenu();
                 break;
 
 
             default:
                 System.out.println("wrong input");
+                showAdminMenu();
         }
     }
 
     public void showAccountMenu(String user) throws SQLException, ParseException, ClassNotFoundException {
         System.out.println("select:");
         System.out.println("-1.return");
+        System.out.println("0.Add Customer");
         System.out.println("1.show Accounts");
         System.out.println("2.find Account By CustomerId");
         System.out.println("3.add Account");
@@ -195,7 +202,13 @@ public class ConsoleMenus {
         String input = scanner.nextLine();
         switch (input) {
             case "-1":
-                showAdminMenu();
+                showLoginMenu();
+            case "0":
+                System.out.println("enter: user/pass/nationalId/fullName/Male or Female/address" );
+                String[] cmd=scanner.nextLine().split("/");
+                customerService.addCustomer(cmd[0],cmd[1],cmd[2],cmd[3], Gender.valueOf(cmd[4]),cmd[5]);
+                showAccountMenu(user);
+                break;
             case "1":
                 accountService.showAllAccount(user);
                 showAccountMenu(user);
@@ -209,9 +222,10 @@ public class ConsoleMenus {
 
             case "3":
                 System.out.println("accountType/customerUser");
-                String[] cmd = scanner.nextLine().split("/");
+                cmd = scanner.nextLine().split("/");
 
                 accountService.addAccount(branchService.getBranchNo(staffsActions.getBranchIdByUser(user)), AccountType.valueOf(cmd[0]), cmd[1]);
+
                 showAccountMenu(user);
                 break;
 
@@ -237,7 +251,7 @@ public class ConsoleMenus {
                 accountNo = scanner.nextLine();
                 Date date= new java.sql.Date(System.currentTimeMillis());
                 Random random=new Random();
-                cardService.addCardToAccount(accountNo, (date.getYear()+4)+""+date.getMonth(),String.valueOf(random.nextInt(8999)+1000));
+                cardService.addCardToAccount(accountNo, (date.getYear()+1900+4)+"/"+date.getMonth(),String.valueOf(random.nextInt(8999)+1000));
                 showAccountMenu(user);
                 break;
             default:
@@ -257,6 +271,7 @@ public class ConsoleMenus {
             System.out.println("2.card to card");
             System.out.println("3.change password");
             System.out.println("4.change pass2");
+            System.out.println("5.transaction menu");
 
             String input=scanner.nextLine();
 
@@ -266,32 +281,37 @@ public class ConsoleMenus {
                     break;
                 case "1":
                   List<Account> accounts= accountService.selectByCustomerId(user,(customerService.getLastCustomerId(user)));
-                  for(int i=0;i<accounts.size();i++){
-                      if(cardService.selectCardByAccountId(accounts.get(i).getId())!=null)
-                      System.out.println(cardService.selectCardByAccountId(accounts.get(i).getId()).toString());
+                  if(accounts!=null) {
+                      for (int i = 0; i < accounts.size(); i++) {
+                          if (cardService.selectCardByAccountId(accounts.get(i).getId()) != null)
+                              System.out.println(cardService.selectCardByAccountId(accounts.get(i).getId()).toString());
+                      }
                   }
                     showCardMenu(user);
                   break;
                 case "2":
-                    System.out.println("enter your card no: ");
-                    String fromCardNo = scanner.nextLine();
-                    System.out.println("enter your destination card no: ");
-                    String toCardNo = scanner.nextLine();
-                    System.out.println("enter amount: ");
-                    Long amount=scanner.nextLong();
-                    scanner.nextLine();
-
-                    System.out.println("enter pass2: ");
-                    String pass2=scanner.nextLine();
-                    System.out.println("enter cvv2: ");
-                    String cvv2=scanner.nextLine();
+                    String fromCardNo = "";
+                    String toCardNo = "";
+                    Long amount=0L;
+                    String pass2="";
+                    String cvv2="";
+                    String exp="";
 
 
-                        while(cardService.cardToCard(user.trim(),fromCardNo.trim(),toCardNo.trim(),amount,cvv2.trim(),pass2.trim())!=1) {
+                        do {
                         System.out.println("enter your card no: ");
                         fromCardNo = scanner.nextLine();
+                        while (fromCardNo.length()!=19) {
+                            System.out.println("card has 16 digit in format XXXX-XXXX-XXXX-XXXX");
+                            fromCardNo = scanner.nextLine();
+                        }
+
                         System.out.println("enter your destination card no: ");
                         toCardNo = scanner.nextLine();
+                            while (toCardNo.length()!=19) {
+                                System.out.println("card has 16 digit in format XXXX-XXXX-XXXX-XXXX");
+                                toCardNo = scanner.nextLine();
+                            }
                         System.out.println("enter amount: ");
                              amount=scanner.nextLong();
                         scanner.nextLine();
@@ -300,7 +320,7 @@ public class ConsoleMenus {
                         System.out.println("enter cvv2: ");
                         cvv2=scanner.nextLine();
 
-                    } ;
+                    }while(cardService.cardToCard(user.trim(),fromCardNo.trim(),toCardNo.trim(),amount,cvv2.trim(),pass2.trim(),exp)!=1 && !fromCardNo.equals("-1")) ;
                     showCardMenu(user);
                     break;
 
@@ -310,6 +330,9 @@ public class ConsoleMenus {
                     Customers customer=customerService.selectCustomerByUser(user);
                     customer.setPass(password);
                     customerService.updateByUser(user,customer);
+                    System.out.println("password updated.");
+                    showCardMenu(user);
+
                     break;
                 case "4":
                     System.out.println("enter cardId:");
@@ -318,32 +341,49 @@ public class ConsoleMenus {
                     String password2=scanner.nextLine();
                     Cards card =cardService.selectCardByCardId(cardId);
                     card.setPass2(password2);
+                    cardService.update(card.getCardNo(),card);
+                    System.out.println("pass2 updated.");
+                    showCardMenu(user);
+                    break;
+                case "5":
+                    transactionMenu(user);
                     break;
                 default:
                     System.out.println("wrong input");
+                    showCardMenu(user);
             }
 
         }
 
-        public void transactionMenu(String user) throws SQLException, ClassNotFoundException {
+        public void transactionMenu(String user) throws SQLException, ClassNotFoundException, ParseException {
             System.out.println("select:");
+            System.out.println("-1.return card Menu:");
             System.out.println("1. transaction after a date YYYY-MM-DD");
             System.out.println("2. transaction after a date and by accountId");
             String input = scanner.nextLine();
             switch (input) {
+                case "-1":
+                    showCardMenu(user);
                 case "1":
                     System.out.println("enter date as YYYY-MM-DD");
                     String date = scanner.nextLine();
                     transactionService.seerchByDate(user,date);
+                    transactionMenu(user);
                     break;
 
                 case "2":
                     System.out.println("enter date as YYYY-MM-DD");
                      date = scanner.nextLine();
-                     int accountId=Integer.parseInt(scanner.nextLine());
-                    transactionService.seerchByDateAndAccountId(user,date,accountId);
-                    break;
+                    System.out.println("enter account id");
 
+                    int accountId=Integer.parseInt(scanner.nextLine());
+                    transactionService.seerchByDateAndAccountId(user,date,accountId);
+                    transactionMenu(user);
+                    break;
+                default:
+                    System.out.println("wrong input");
+
+                    transactionMenu(user);
 
             }
         }

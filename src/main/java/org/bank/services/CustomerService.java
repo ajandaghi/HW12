@@ -21,6 +21,7 @@ public class CustomerService {
     public void addCustomer(String user, String pass, String nationalId, String fullName, Gender gender, String address) throws SQLException {
     if(customersRepository.selectByUser(user)==null){
         customersRepository.insert(new Customers(user,pass,nationalId,fullName,gender,address,true));
+        System.out.println("customer successfully added");
     } else {
         System.out.println("user is in use");
     }

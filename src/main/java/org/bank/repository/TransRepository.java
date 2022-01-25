@@ -75,7 +75,7 @@ public class TransRepository {
             transaction.setAccountId(resultSet.getInt("accountId"));
             transaction.setDesAccountId(resultSet.getInt("desAccountId"));
             transaction.setDateTime(resultSet.getTimestamp("dateTime"));
-            transaction.setOperator(resultSet.getString("operatorId"));
+            transaction.setOperator(resultSet.getString("operator"));
 
             transactions.add(transaction);
         }

@@ -3,7 +3,7 @@ CREATE TYPE AccountType AS ENUM ('Saving', 'Current', 'LongInvestment', 'ShortIn
 create table if not exists account(
     id serial primary key,
     accountNo varchar(24),
-    accountId integer,
+    customerId integer,
     branchId integer,
     accountType AccountType ,
     balance bigint,

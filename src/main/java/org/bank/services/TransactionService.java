@@ -38,17 +38,19 @@ public class TransactionService {
     public void seerchByDate(String user,String date) throws SQLException, ClassNotFoundException {
         CustomerService customerService=new CustomerService();
       List<Account> acounts=accountService.selectByCustomerId(user,customerService.getLastCustomerId(user));
+      Boolean isEmpty=true;
       if (!acounts.isEmpty()) {
           for (int i = 0; i < acounts.size(); i++) {
               for(int j=0; j<transRepository.searchByDateAndAccountId(acounts.get(i).getId(), Timestamp.valueOf(date + " 00:00:00")).size();j++) {
                   System.out.println(transRepository.searchByDateAndAccountId(acounts.get(i).getId(), Timestamp.valueOf(date + " 00:00:00")).get(j).toString());
+                  isEmpty=false;
               }
           }
 
-          return;
       }
-        System.out.println("no transaction found");
-
+        if (isEmpty) {
+            System.out.println("No transaction Found");
+        }
     }
 
 
@@ -57,10 +59,14 @@ public class TransactionService {
 
         if(customerService.selectCustomerByUser(user).getId()==accountService.selectAccountById(accountId).getCustomerId()) {
 
+            if(!transRepository.searchByDateAndAccountId(accountService.selectAccountById(accountId).getId(), Timestamp.valueOf(date + " 00:00:00")).isEmpty()) {
 
-            for (int j = 0; j < transRepository.searchByDateAndAccountId(accountService.selectAccountById(accountId).getId(), Timestamp.valueOf(date + " 00:00:00")).size(); j++) {
-                System.out.println(transRepository.searchByDateAndAccountId(accountService.selectAccountById(accountId).getId(), Timestamp.valueOf(date + " 00:00:00")).get(j).toString());
-            }
+                for (int j = 0; j < transRepository.searchByDateAndAccountId(accountService.selectAccountById(accountId).getId(), Timestamp.valueOf(date + " 00:00:00")).size(); j++) {
+                    System.out.println(transRepository.searchByDateAndAccountId(accountService.selectAccountById(accountId).getId(), Timestamp.valueOf(date + " 00:00:00")).get(j).toString());
+                }
+            } else
+                System.out.println("No transaction Found");
+
         } else
             System.out.println("this account id isnot yours");
     }

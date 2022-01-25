@@ -109,7 +109,7 @@ public class CardRepository {
     }
 
     public Cards selectByCardId(int cardId) throws SQLException {
-        String selectSql = "select * from cards where  cardId=?";
+        String selectSql = "select * from cards where  Id=?";
         PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
         preparedStatement.setInt(1,cardId);
         ResultSet resultSet = preparedStatement.executeQuery();

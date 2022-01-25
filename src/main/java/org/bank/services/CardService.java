@@ -47,7 +47,8 @@ public class CardService {
         return (cardNo + i);
     }
 
-    public int cardToCard(String user, String fromCard,  String toCard, Long amount, String cvv2, String pass2) throws SQLException {
+    public int cardToCard(String user, String fromCard,  String toCard, Long amount, String cvv2, String pass2, String exp) throws SQLException {
+        Date date=new Date(System.currentTimeMillis());
         if(cardRepository.selectByCardNo(fromCard)==null ) {
             System.out.println("no such card found");
 
@@ -66,19 +67,25 @@ public class CardService {
             System.out.println("your cvv2 isnot valid");
             return -4;
         } else if (!cardRepository.selectByCardNo(fromCard).getPass2().equals(pass2)){
+            System.out.println("wrong pass2");
             repeat++;
             return -5;
+        } else if(!cardRepository.selectByCardNo(fromCard).getEnable())   {
+            System.out.println("your card is not active:");
+            return -6;
         } else if (repeat==3) {
             Cards card=cardRepository.selectByCardNo(fromCard);
             card.setEnable(false);
             cardRepository.updateByCardNo(fromCard,card);
             System.out.println("wrong pass2 3 time card is deactivated");
-            return -6;
-        } else if(!cardRepository.selectByCardNo(fromCard).getEnable())   {
-            System.out.println("your card is not active:");
             return -7;
+        } else if((cardRepository.selectByCardNo(fromCard).getExpDate().getYear()+"/"+cardRepository.selectByCardNo(fromCard).getExpDate().getMonth()).equals(exp)){
+            System.out.println("exp is wrong");
+            return -8;
+        } else if(cardRepository.selectByCardNo(fromCard).getExpDate().before(date)){
+            System.out.println("your card is expired");
+            return -9;
         }
-        transactionService.createNewTransaction(amount, TransType.CardtoCard,cardRepository.selectByCardNo(fromCard).getId(),cardRepository.selectByCardNo(toCard).getId(),user );
         Account account=accountService.selectAccountById(cardRepository.selectByCardNo(fromCard).getAccountId());
         account.setBalance(account.getBalance()-600-amount);
         accountService.updateByAccountNo(accountService.selectAccountById(cardRepository.selectByCardNo(fromCard).getAccountId()).getAccountNo(),account);
@@ -101,6 +108,10 @@ public class CardService {
     }
 
     public  void addCardToAccount(String accountNo,String expDate,String pass2) throws SQLException, ParseException {
+        if(accountService.selectByAccountNo(accountNo)==null){
+            System.out.println("account not found");
+            return;
+        }
         if (accountService.selectByAccountNo(accountNo).getCardId() <= 0) {
             String cardNo = addCard(accountService.selectByAccountNo(accountNo).getId(), new Date(new SimpleDateFormat("YYYY/MM").parse(expDate).getTime()), pass2);
             accountService.updateByAccountNo(accountNo, new Account(accountNo, accountService.selectByAccountNo(accountNo).getCustomerId(), accountService.selectByAccountNo(accountNo).getBranchId(), accountService.selectByAccountNo(accountNo).getAccountType(), accountService.selectByAccountNo(accountNo).getBalance(), getCardIdByCardNo(cardNo)));
@@ -127,6 +138,10 @@ public class CardService {
         }
         System.out.println("no card with this account Id");
         return null;
+    }
+
+    public void update(String cardNo, Cards cards) throws SQLException {
+        cardRepository.updateByCardNo(cardNo,cards);
     }
 
 

@@ -3,6 +3,7 @@ package org.bank.services;
 import org.bank.Connect;
 import org.bank.entity.Account;
 import org.bank.entity.AccountType;
+import org.bank.entity.Cards;
 import org.bank.repository.AccountRepository;
 
 import java.sql.Connection;
@@ -22,7 +23,9 @@ public class AccountService {
     }
 
     public  void addAccount(String branchNo , AccountType accountType, String cUser) throws SQLException {
-
+         if(customerService.selectCustomerByUser(cUser)==null){
+             return;
+         }
         String accountNo=branchNo+"."+accountType.getType()+"."+customerService.getLastCustomerId(cUser);
         int i=1;
         while(accountRepository.selectByAccountNo(accountNo+"-"+i)!=null){
@@ -33,18 +36,21 @@ public class AccountService {
         accountNo=accountNo+"-"+i;
 
         accountRepository.insert(new Account(accountNo,customerService.getLastCustomerId(cUser),branchService.getBranchId(branchNo),accountType,50000L,-1));
-
+        System.out.println("account added");
         }
 
 
 
     public void showAllAccount(String user) throws SQLException, ClassNotFoundException {
+         boolean isEmpty=true;
          StaffsActions staffsActions=new StaffsActions();
 
             for (int i = 0; i < accountRepository.select().size(); i++) {
-                if(accountRepository.select().get(0).getBranchId()==staffsActions.getBranchIdByUser(user))
-                System.out.println(accountRepository.select().get(i).toString());
+                if(accountRepository.select().get(i).getBranchId()==staffsActions.getBranchIdByUser(user)) {
+                    System.out.println(accountRepository.select().get(i).toString()); isEmpty=false;
+                }
             }
+            if (isEmpty) System.out.println("no Account in your branch found.");
 
 
     }
@@ -59,15 +65,20 @@ public class AccountService {
             return accountRepository.selectByCustomerId(customerId);
 
         } else{
-            System.out.println("no card found");
+            System.out.println("no Account found");
             return null;
         }
 
     }
 
-    public void deleteAccount(String accountNo) throws SQLException {
+    public void deleteAccount(String accountNo) throws SQLException, ClassNotFoundException {
         if (accountRepository.selectByAccountNo(accountNo)!=null) {
+            CardService cardService=new CardService();
+            Cards card =cardService.selectCardByAccountId(accountRepository.selectByAccountNo(accountNo).getId());
+            card.setEnable(false);
+            cardService.update(cardService.selectCardByAccountId(accountRepository.selectByAccountNo(accountNo).getId()).getCardNo(),card);
             accountRepository.deleteByAccountNo(accountNo);
+
             System.out.println("account deleted");
         }
         else
