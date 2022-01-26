@@ -18,100 +18,129 @@ public class AccountRepository {
         this.connection = connection;
     }
 
-    public void insert(Account account) throws SQLException {
-        String insertSql = "insert into account (accountNo, customerId, branchId, accountType, balance, cardId)" +
-                "values(?,?,?,?::accountType,?,?)";
-        PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
-        preparedStatement.setString(1, account.getAccountNo());
-        preparedStatement.setInt(2, account.getCustomerId());
-        preparedStatement.setInt(3, account.getBranchId());
-        preparedStatement.setString(4, account.getAccountType().toString());
-        preparedStatement.setLong(5, account.getBalance());
-        preparedStatement.setInt(6, account.getCardId());
-        preparedStatement.execute();
+    public void insert(Account account)  {
+        try {
+            String insertSql = "insert into account (accountNo, customerId, branchId, accountType, balance, cardId)" +
+                    "values(?,?,?,?::accountType,?,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
+            preparedStatement.setString(1, account.getAccountNo());
+            preparedStatement.setInt(2, account.getCustomerId());
+            preparedStatement.setInt(3, account.getBranchId());
+            preparedStatement.setString(4, account.getAccountType().toString());
+            preparedStatement.setLong(5, account.getBalance());
+            preparedStatement.setInt(6, account.getCardId());
+            preparedStatement.execute();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
 
     }
-    public void updateByAccountNo(String accountNo, Account account) throws SQLException {
-        String updateSql="update  account set customerId=?, " +
-                " branchId=?,  accountType=?::accountType,  balance=?,  cardId=?   where  accountNo=?" ;
-        PreparedStatement preparedStatement= connection.prepareStatement(updateSql);
-        preparedStatement.setString(1,accountNo);
+    public void updateByAccountNo(String accountNo, Account account)  {
+        try {
+            String updateSql = "update  account set customerId=?, " +
+                    " branchId=?,  accountType=?::accountType,  balance=?,  cardId=?   where  accountNo=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
+            preparedStatement.setString(1, accountNo);
 
-        preparedStatement.setInt(1,account.getCustomerId());
-        preparedStatement.setInt(2,account.getBranchId());
-        preparedStatement.setString(3,account.getAccountType().toString());
-        preparedStatement.setLong(4,account.getBalance());
-        preparedStatement.setInt(5,account.getCardId());
-        preparedStatement.setString(6,account.getAccountNo());
-        preparedStatement.executeUpdate();
+            preparedStatement.setInt(1, account.getCustomerId());
+            preparedStatement.setInt(2, account.getBranchId());
+            preparedStatement.setString(3, account.getAccountType().toString());
+            preparedStatement.setLong(4, account.getBalance());
+            preparedStatement.setInt(5, account.getCardId());
+            preparedStatement.setString(6, account.getAccountNo());
+            preparedStatement.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
 
     }
 
-    public Account selectByAccountNo(String accountNo) throws SQLException {
-        String selectSql = "select * from account where accountNo=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        preparedStatement.setString(1,accountNo);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
+    public Account selectByAccountNo(String accountNo)  {
         Account account = null;
-        while (resultSet.next()) {
-           account = new Account();
-            account.setId(resultSet.getInt("id"));
-            account.setAccountNo(resultSet.getString("AccountNo"));
-            account.setCustomerId(resultSet.getInt("customerId"));
-            account.setBranchId(resultSet.getInt("branchId"));
-            account.setAccountType(AccountType.valueOf(resultSet.getString("accountType")));
-            account.setBalance(resultSet.getLong("balance"));
-            account.setCardId(resultSet.getInt("cardId"));
 
+        try {
+            String selectSql = "select * from account where accountNo=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+            preparedStatement.setString(1, accountNo);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                account = new Account();
+                account.setId(resultSet.getInt("id"));
+                account.setAccountNo(resultSet.getString("AccountNo"));
+                account.setCustomerId(resultSet.getInt("customerId"));
+                account.setBranchId(resultSet.getInt("branchId"));
+                account.setAccountType(AccountType.valueOf(resultSet.getString("accountType")));
+                account.setBalance(resultSet.getLong("balance"));
+                account.setCardId(resultSet.getInt("cardId"));
+
+            }
+
+        } catch(SQLException e){
+            e.printStackTrace();
         }
         return account;
     }
 
-    public List<Account> select() throws SQLException {
-        String selectSql = "select * from account";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
+    public List<Account> select()   {
         List<Account> accounts = new ArrayList<>();
-        while (resultSet.next()) {
-           Account account = new Account();
-            account.setId (resultSet.getInt("id"));
-            account.setAccountNo(resultSet.getString("AccountNo"));
-            account.setCustomerId(resultSet.getInt("customerId"));
-            account.setBranchId(resultSet.getInt("branchId"));
-            account.setAccountType(AccountType.valueOf(resultSet.getString("accountType")));
-            account.setBalance(resultSet.getLong("balance"));
-            account.setCardId(resultSet.getInt("cardId"));
-            accounts.add(account);
+        try {
+            String selectSql = "select * from account";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Account account = new Account();
+                account.setId(resultSet.getInt("id"));
+                account.setAccountNo(resultSet.getString("AccountNo"));
+                account.setCustomerId(resultSet.getInt("customerId"));
+                account.setBranchId(resultSet.getInt("branchId"));
+                account.setAccountType(AccountType.valueOf(resultSet.getString("accountType")));
+                account.setBalance(resultSet.getLong("balance"));
+                account.setCardId(resultSet.getInt("cardId"));
+                accounts.add(account);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
         }
         return accounts;
     }
 
-    public void deleteByAccountNo(String accountNo) throws SQLException {
-        String deleteSql = "delete from account where  accountNo=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
-        preparedStatement.setString(1,accountNo);
-        preparedStatement.executeUpdate();
+    public void deleteByAccountNo(String accountNo)  {
+        try {
+            String deleteSql = "delete from account where  accountNo=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+            preparedStatement.setString(1, accountNo);
+            preparedStatement.executeUpdate();
+        } catch(SQLException e){
+            e.printStackTrace();
+        }
+
     }
 
-    public List<Account> selectByCustomerId(int customerId) throws SQLException {
-        String selectSql = "select * from account where  CustomerId=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        preparedStatement.setInt(1,customerId);
+    public List<Account> selectByCustomerId(int customerId) {
+        List<Account> accounts = new ArrayList<>();
 
-        ResultSet resultSet = preparedStatement.executeQuery();
-        List<Account> accounts=new ArrayList<>();
-        while (resultSet.next()) {
-            Account account = new Account();
-            account.setId(resultSet.getInt("id"));
-            account.setAccountNo(resultSet.getString("AccountNo"));
-            account.setCustomerId(resultSet.getInt("customerId"));
-            account.setBranchId(resultSet.getInt("branchId"));
-            account.setAccountType(AccountType.valueOf(resultSet.getString("accountType")));
-            account.setBalance(resultSet.getLong("balance"));
-            account.setCardId(resultSet.getInt("cardId"));
-            accounts.add(account);
+        try {
+            String selectSql = "select * from account where  CustomerId=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+            preparedStatement.setInt(1, customerId);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Account account = new Account();
+                account.setId(resultSet.getInt("id"));
+                account.setAccountNo(resultSet.getString("AccountNo"));
+                account.setCustomerId(resultSet.getInt("customerId"));
+                account.setBranchId(resultSet.getInt("branchId"));
+                account.setAccountType(AccountType.valueOf(resultSet.getString("accountType")));
+                account.setBalance(resultSet.getLong("balance"));
+                account.setCardId(resultSet.getInt("cardId"));
+                accounts.add(account);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
         }
         return accounts;
     }

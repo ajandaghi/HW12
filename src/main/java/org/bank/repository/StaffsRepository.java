@@ -17,83 +17,111 @@ public class StaffsRepository {
         this.connection = connection;
     }
 
-    public void insert(Staffs staffs) throws SQLException {
-        String insertSql = "insert into staffs (userId, fullName, pass,staffType, branchNo)" +
-                "values(?,?,?,?::staffType,?)";
-        PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
-        preparedStatement.setString(1, staffs.getUser());
-        preparedStatement.setString(2, staffs.getFullName());
-        preparedStatement.setString(3, staffs.getPass());
+    public void insert(Staffs staffs) {
+        try {
+            String insertSql = "insert into staffs (userId, fullName, pass,staffType, branchNo)" +
+                    "values(?,?,?,?::staffType,?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertSql);
+            preparedStatement.setString(1, staffs.getUser());
+            preparedStatement.setString(2, staffs.getFullName());
+            preparedStatement.setString(3, staffs.getPass());
 
-        preparedStatement.setString(4, staffs.getStaffType().toString());
-        preparedStatement.setString(5, staffs.getBranchNo());
-        preparedStatement.execute();
+            preparedStatement.setString(4, staffs.getStaffType().toString());
+            preparedStatement.setString(5, staffs.getBranchNo());
+            preparedStatement.execute();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public void updateByStaffUser(String user, Staffs staffs) throws SQLException {
-        String updateSql = "update  staffs set " +
-                "fullName=?, pass=?, staffType=?::staffType, branchNo=? where  userId=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
-        preparedStatement.setString(1,staffs.getFullName());
-        preparedStatement.setString(2,staffs.getPass());
-        preparedStatement.setString(3, staffs.getStaffType().toString());
-        preparedStatement.setString(4, staffs.getBranchNo());
-        preparedStatement.setString(5, user);
-        preparedStatement.executeUpdate();
+        try {
+            String updateSql = "update  staffs set " +
+                    "fullName=?, pass=?, staffType=?::staffType, branchNo=? where  userId=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(updateSql);
+            preparedStatement.setString(1, staffs.getFullName());
+            preparedStatement.setString(2, staffs.getPass());
+            preparedStatement.setString(3, staffs.getStaffType().toString());
+            preparedStatement.setString(4, staffs.getBranchNo());
+            preparedStatement.setString(5, user);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
     }
 
-    public Staffs selectByUser(String  user) throws SQLException {
-        String selectSql = "select * from staffs where  userId=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        preparedStatement.setString(1,user);
-        ResultSet resultSet = preparedStatement.executeQuery();
+    public Staffs selectByUser(String  user)  {
         Staffs staffs = null;
-        while (resultSet.next()) {
-            staffs = new Staffs();
-            staffs.setUser(resultSet.getString("userId"));
-            staffs.setPass(resultSet.getString("pass"));
-            staffs.setFullName(resultSet.getString("fullName"));
-            staffs.setStaffType(StaffType.valueOf(resultSet.getString("staffType")));
-            staffs.setBranchNo(resultSet.getString("branchNo"));
+        try {
+            String selectSql = "select * from staffs where  userId=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+            preparedStatement.setString(1, user);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
+            while (resultSet.next()) {
+                staffs = new Staffs();
+                staffs.setUser(resultSet.getString("userId"));
+                staffs.setPass(resultSet.getString("pass"));
+                staffs.setFullName(resultSet.getString("fullName"));
+                staffs.setStaffType(StaffType.valueOf(resultSet.getString("staffType")));
+                staffs.setBranchNo(resultSet.getString("branchNo"));
+
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
         }
         return staffs;
     }
-    public void deleteByUser(int user) throws SQLException {
-        String deleteSql = "delete from staffs where  userId=?";
-        PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
-        preparedStatement.setInt(1,user);
-        preparedStatement.executeUpdate();
+    public void deleteByUser(int user)  {
+        try {
+            String deleteSql = "delete from staffs where  userId=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(deleteSql);
+            preparedStatement.setInt(1, user);
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
     public int getLastId() throws SQLException {
-        String selectSql = "select count(*) from staffs";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        int num=0;
-        if(resultSet.next()){
-            num=resultSet.getInt(1);
+        int num = 0;
+        try {
+            String selectSql = "select count(*) from staffs";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                num = resultSet.getInt(1);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
         }
         return  num;
     }
 
-    public Staffs selectBranchBoss(String  branchNo) throws SQLException {
-        String selectSql = "select * from staffs where  branchNo=? and staffType=?::staffType";
-        PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
-        preparedStatement.setString(1,branchNo);
-        preparedStatement.setString(2,"Boss");
-
-        ResultSet resultSet = preparedStatement.executeQuery();
+    public Staffs selectBranchBoss(String  branchNo)  {
         Staffs staffs = null;
-        while (resultSet.next()) {
-            staffs = new Staffs();
-            staffs.setUser(resultSet.getString("userId"));
-            staffs.setPass(resultSet.getString("pass"));
-            staffs.setFullName(resultSet.getString("fullName"));
-            staffs.setStaffType(StaffType.valueOf(resultSet.getString("staffType")));
-            staffs.setBranchNo(resultSet.getString("branchNo"));
+        try {
+            String selectSql = "select * from staffs where  branchNo=? and staffType=?::staffType";
+            PreparedStatement preparedStatement = connection.prepareStatement(selectSql);
+            preparedStatement.setString(1, branchNo);
+            preparedStatement.setString(2, "Boss");
 
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                staffs = new Staffs();
+                staffs.setUser(resultSet.getString("userId"));
+                staffs.setPass(resultSet.getString("pass"));
+                staffs.setFullName(resultSet.getString("fullName"));
+                staffs.setStaffType(StaffType.valueOf(resultSet.getString("staffType")));
+                staffs.setBranchNo(resultSet.getString("branchNo"));
+
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
         }
         return staffs;
     }
