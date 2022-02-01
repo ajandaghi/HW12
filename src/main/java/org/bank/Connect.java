@@ -11,14 +11,20 @@ public final class Connect {
 
 
 
-    private Connect() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        Connection connection= DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres","postgres","postgres");
-        this.connection=connection;
+    private Connect() {
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+            this.connection = connection;
+        } catch (SQLException e){
+            e.printStackTrace();
+        } catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }
 
     }
 
-    public static Connect getInstance() throws ClassNotFoundException, SQLException {
+    public static Connect getInstance()  {
         if(INSTANCE == null) {
             INSTANCE = new Connect();
         }
