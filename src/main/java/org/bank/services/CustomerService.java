@@ -14,11 +14,11 @@ public class CustomerService {
     private Connection connection= Connect.getInstance().getConnect();
     private int repeat=0;
 
-    public CustomerService() throws SQLException, ClassNotFoundException {
+    public CustomerService()  {
         customersRepository=new CustomersRepository(connection);
     }
 
-    public void addCustomer(String user, String pass, String nationalId, String fullName, Gender gender, String address) throws SQLException {
+    public void addCustomer(String user, String pass, String nationalId, String fullName, Gender gender, String address)  {
     if(customersRepository.selectByUser(user)==null){
         customersRepository.insert(new Customers(user,pass,nationalId,fullName,gender,address,true));
         System.out.println("customer successfully added");
@@ -27,7 +27,7 @@ public class CustomerService {
     }
     }
 
-    public int getLastCustomerId(String user) throws SQLException {
+    public int getLastCustomerId(String user)  {
         if(customersRepository.selectByUser(user)==null){
             return customersRepository.getLastId();
         }
@@ -35,7 +35,7 @@ public class CustomerService {
             return customersRepository.selectByUser(user).getId();
     }
 
-    public String getCustomerUserById(int id) throws SQLException {
+    public String getCustomerUserById(int id)  {
         if(customersRepository.selectByCustomerId(id)!=null){
             return customersRepository.selectByCustomerId(id).getUser();
         }
@@ -44,7 +44,7 @@ public class CustomerService {
         return  "";
     }
 
-    public Boolean CustomerLogin(String user, String pass) throws SQLException {
+    public Boolean CustomerLogin(String user, String pass)  {
 
         if (customersRepository.selectByUser(user)!=null) {
             if(!customersRepository.selectByUser(user).getEnable()){
@@ -73,12 +73,12 @@ public class CustomerService {
         return false;
     }
 
-    public void updateByUser(String user, Customers customers) throws SQLException {
+    public void updateByUser(String user, Customers customers)  {
         customersRepository.updateByUser(user,customers);
         System.out.println("your profile has been updated");
     }
 
-    public Customers selectCustomerByUser(String user) throws SQLException {
+    public Customers selectCustomerByUser(String user)  {
         if(customersRepository.selectByUser(user)!=null) {
             return customersRepository.selectByUser(user);
         } else

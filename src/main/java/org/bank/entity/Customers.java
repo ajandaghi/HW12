@@ -1,5 +1,7 @@
 package org.bank.entity;
 
+import org.bank.exceptions.InvalidNationalId;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ public class Customers {
     //private List<Account> accounts = new ArrayList<>();
 
     public Customers(String user, String pass, String nationalId, String fullName, Gender gender, String address, Boolean isEnable) {
+
         this.user = user;
         this.pass = pass;
         this.nationalId = nationalId;
@@ -40,6 +43,7 @@ public class Customers {
     }
 
     public void setNationalId(String nationalId) {
+
         this.nationalId = nationalId;
     }
 
@@ -86,6 +90,7 @@ public class Customers {
     public Boolean getEnable() {
         return isEnable;
     }
+
 
     public void setEnable(Boolean enable) {
         isEnable = enable;

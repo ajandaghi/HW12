@@ -1,6 +1,8 @@
 package org.bank;
 
 import org.bank.entity.*;
+import org.bank.exceptions.InvalidCmdFormat;
+import org.bank.exceptions.InvalidNationalId;
 import org.bank.repository.TransRepository;
 import org.bank.services.*;
 
@@ -29,7 +31,7 @@ public class ConsoleMenus {
         branchService=new BranchService();
     }
 
-    public void showMainMenu() throws SQLException, ParseException, ClassNotFoundException {
+    public void showMainMenu()  {
         System.out.println("enter what you want to do:");
         System.out.println("-1.exit");
         System.out.println("1. log-in");
@@ -48,7 +50,7 @@ public class ConsoleMenus {
         }
     }
 
-    private void showLoginMenu() throws SQLException, ParseException, ClassNotFoundException {
+    private void showLoginMenu()  {
         System.out.println("select:");
         System.out.println("-1.return main menu");
         System.out.println("1.admin");
@@ -58,7 +60,7 @@ public class ConsoleMenus {
        login(input);
     }
 
-    public void login(String input) throws SQLException, ParseException, ClassNotFoundException {
+    public void login(String input)  {
         String user="";
         String pass="";
 
@@ -120,7 +122,7 @@ public class ConsoleMenus {
         }
     }
 
-    private void showBossMenu(String user) throws SQLException, ParseException, ClassNotFoundException {
+    private void showBossMenu(String user)  {
         System.out.println("select:");
         System.out.println("-1.logout");
         System.out.println("1.add staffs");
@@ -135,7 +137,13 @@ public class ConsoleMenus {
             case "1":
                 System.out.println("enter: user/pass/fullName");
                String[] cmd=scanner.nextLine().split("/");
-                staffsActions.addEmployee(cmd[0],cmd[1],cmd[2],staffsActions.getBranchIdByUser(user));
+               try {
+                   checkInputCmnds(cmd,3);
+                   staffsActions.addEmployee(cmd[0], cmd[1], cmd[2], staffsActions.getBranchIdByUser(user));
+               }
+               catch(InvalidCmdFormat e){
+                   e.printStackTrace();
+               }
                 showAccountMenu(user);
                 break;
 
@@ -147,7 +155,7 @@ public class ConsoleMenus {
 
     }
 
-    private void showAdminMenu() throws SQLException, ParseException, ClassNotFoundException {
+    private void showAdminMenu()  {
         System.out.println("select:");
         System.out.println("-1.log out");
         System.out.println("1.add branch");
@@ -163,21 +171,40 @@ public class ConsoleMenus {
             case "1":
                 System.out.println("enter: branchNo/branchName/address");
                 cmd=scanner.nextLine().split("/");
-                staffsActions.addBranch(cmd[0],cmd[1],cmd[2]);
-                showAdminMenu();
+                try {
+                    checkInputCmnds(cmd,3);
+                    staffsActions.addBranch(cmd[0], cmd[1], cmd[2]);
+                }
+                catch (InvalidCmdFormat e){
+                    e.printStackTrace();
+                }
+                    showAdminMenu();
+
                 break;
 
             case "2":
                 System.out.println("enter: user/pass/fullName/branchNo");
                 cmd=scanner.nextLine().split("/");
-                staffsActions.addEmployee(cmd[0],cmd[1],cmd[2],branchService.getBranchId(cmd[3]));
+                try {
+                    checkInputCmnds(cmd, 4);
+                    staffsActions.addEmployee(cmd[0], cmd[1], cmd[2], branchService.getBranchId(cmd[3]));
+                }
+                catch(InvalidCmdFormat e){
+                    e.printStackTrace();
+                }
                 showAdminMenu();
                 break;
 
             case "3":
                 System.out.println("enter: user/branchNo");
                 cmd=scanner.nextLine().split("/");
-                staffsActions.addBranchBoss(cmd[0],cmd[1]);
+                try {
+                    checkInputCmnds(cmd, 2);
+                    staffsActions.addBranchBoss(cmd[0], cmd[1]);
+                }
+                catch(InvalidCmdFormat e){
+                    e.printStackTrace();
+                }
                 showAdminMenu();
                 break;
 
@@ -188,7 +215,7 @@ public class ConsoleMenus {
         }
     }
 
-    public void showAccountMenu(String user) throws SQLException, ParseException, ClassNotFoundException {
+    public void showAccountMenu(String user) {
         System.out.println("select:");
         System.out.println("-1.return");
         System.out.println("0.Add Customer");
@@ -206,7 +233,20 @@ public class ConsoleMenus {
             case "0":
                 System.out.println("enter: user/pass/nationalId/fullName/Male or Female/address" );
                 String[] cmd=scanner.nextLine().split("/");
-                customerService.addCustomer(cmd[0],cmd[1],cmd[2],cmd[3], Gender.valueOf(cmd[4]),cmd[5]);
+                try{
+                    checkInputCmnds(cmd,6);
+                    checkNationalId(cmd[2]);
+                    customerService.addCustomer(cmd[0],cmd[1],cmd[2],cmd[3], Gender.valueOf(cmd[4]),cmd[5]);
+
+                }
+                catch(InvalidNationalId e){
+                    e.printStackTrace();
+                }
+                catch (InvalidCmdFormat e){
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e){
+                    e.printStackTrace();
+                }
                 showAccountMenu(user);
                 break;
             case "1":
@@ -223,8 +263,14 @@ public class ConsoleMenus {
             case "3":
                 System.out.println("accountType/customerUser");
                 cmd = scanner.nextLine().split("/");
-
-                accountService.addAccount(branchService.getBranchNo(staffsActions.getBranchIdByUser(user)), AccountType.valueOf(cmd[0]), cmd[1]);
+                try {
+                    checkInputCmnds(cmd, 2);
+                    accountService.addAccount(branchService.getBranchNo(staffsActions.getBranchIdByUser(user)), AccountType.valueOf(cmd[0]), cmd[1]);
+                } catch(InvalidCmdFormat e){
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e){
+                    e.printStackTrace();
+                }
 
                 showAccountMenu(user);
                 break;
@@ -264,7 +310,7 @@ public class ConsoleMenus {
 
 
 
-        public void showCardMenu(String user) throws SQLException, ClassNotFoundException, ParseException {
+        public void showCardMenu(String user) {
             System.out.println("select:");
             System.out.println("-1.log out");
             System.out.println("1.show my cards");
@@ -355,7 +401,7 @@ public class ConsoleMenus {
 
         }
 
-        public void transactionMenu(String user) throws SQLException, ClassNotFoundException, ParseException {
+        public void transactionMenu(String user) {
             System.out.println("select:");
             System.out.println("-1.return card Menu:");
             System.out.println("1. transaction after a date YYYY-MM-DD");
@@ -367,8 +413,14 @@ public class ConsoleMenus {
                 case "1":
                     System.out.println("enter date as YYYY-MM-DD");
                     String date = scanner.nextLine();
-                    transactionService.seerchByDate(user,date);
-                    transactionMenu(user);
+                    try {
+                        transactionService.seerchByDate(user, date);
+                    } catch(IllegalArgumentException e) {
+                        e.printStackTrace();
+                    }
+                        transactionMenu(user);
+
+
                     break;
 
                 case "2":
@@ -377,7 +429,11 @@ public class ConsoleMenus {
                     System.out.println("enter account id");
 
                     int accountId=Integer.parseInt(scanner.nextLine());
-                    transactionService.seerchByDateAndAccountId(user,date,accountId);
+                    try {
+                        transactionService.seerchByDateAndAccountId(user, date, accountId);
+                    } catch(IllegalArgumentException e){
+                        e.printStackTrace();
+                    }
                     transactionMenu(user);
                     break;
                 default:
@@ -387,4 +443,22 @@ public class ConsoleMenus {
 
             }
         }
+
+    public void checkNationalId(String nationalId){
+        if(nationalId.length()!=10){
+            throw new InvalidNationalId("enter valid national code");
+
+        }
+        for(Character ch:nationalId.toCharArray()){
+            if(!Character.isDigit(ch))
+                throw new InvalidNationalId("enter valid national code all should be number");
+
+        }
+    }
+
+    public void checkInputCmnds(String[] cmd,int n){
+        if(cmd.length !=n){
+            throw new InvalidCmdFormat("your command format is wrong, check your command component");
+        }
+    }
 }

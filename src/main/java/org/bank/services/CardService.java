@@ -20,14 +20,14 @@ public class CardService {
     private  CustomerService customerService;
     private  TransactionService transactionService;
     private  int repeat=0;
-    public CardService() throws SQLException, ClassNotFoundException {
+    public CardService() {
         cardRepository=new CardRepository(connection);
         accountService=new AccountService();
         customerService=new CustomerService();
         transactionService=new TransactionService();
     }
 
-    public String addCard(int accountId, Date expDate,String pass2) throws SQLException {
+    public String addCard(int accountId, Date expDate,String pass2)  {
 
         Random random = new Random();
 
@@ -47,7 +47,7 @@ public class CardService {
         return (cardNo + i);
     }
 
-    public int cardToCard(String user, String fromCard,  String toCard, Long amount, String cvv2, String pass2, String exp) throws SQLException {
+    public int cardToCard(String user, String fromCard,  String toCard, Long amount, String cvv2, String pass2, String exp)  {
         Date date=new Date(System.currentTimeMillis());
         if(cardRepository.selectByCardNo(fromCard)==null ) {
             System.out.println("no such card found");
@@ -102,18 +102,23 @@ public class CardService {
         return 1;
     }
 
-    public int getCardIdByCardNo(String cardNo) throws SQLException {
+    public int getCardIdByCardNo(String cardNo)  {
 
         return cardRepository.selectByCardNo(cardNo).getId();
     }
 
-    public  void addCardToAccount(String accountNo,String expDate,String pass2) throws SQLException, ParseException {
+    public  void addCardToAccount(String accountNo,String expDate,String pass2)  {
         if(accountService.selectByAccountNo(accountNo)==null){
             System.out.println("account not found");
             return;
         }
         if (accountService.selectByAccountNo(accountNo).getCardId() <= 0) {
-            String cardNo = addCard(accountService.selectByAccountNo(accountNo).getId(), new Date(new SimpleDateFormat("YYYY/MM").parse(expDate).getTime()), pass2);
+            String cardNo="";
+            try {
+               cardNo = addCard(accountService.selectByAccountNo(accountNo).getId(), new Date(new SimpleDateFormat("YYYY/MM").parse(expDate).getTime()), pass2);
+            } catch (ParseException e){
+                e.printStackTrace();
+            }
             accountService.updateByAccountNo(accountNo, new Account(accountNo, accountService.selectByAccountNo(accountNo).getCustomerId(), accountService.selectByAccountNo(accountNo).getBranchId(), accountService.selectByAccountNo(accountNo).getAccountType(), accountService.selectByAccountNo(accountNo).getBalance(), getCardIdByCardNo(cardNo)));
             System.out.println("card added to this account.");
 
@@ -124,7 +129,7 @@ public class CardService {
 
     }
 
-    public Cards selectCardByAccountId(int accountId) throws SQLException {
+    public Cards selectCardByAccountId(int accountId)  {
         if(cardRepository.selectByAccountId(accountId)!=null){
             return cardRepository.selectByAccountId(accountId);
         }
@@ -132,7 +137,7 @@ public class CardService {
         return null;
     }
 
-    public Cards selectCardByCardId(int cardId) throws SQLException {
+    public Cards selectCardByCardId(int cardId){
         if(cardRepository.selectByCardId(cardId)!=null){
             return cardRepository.selectByCardId(cardId);
         }
@@ -140,7 +145,7 @@ public class CardService {
         return null;
     }
 
-    public void update(String cardNo, Cards cards) throws SQLException {
+    public void update(String cardNo, Cards cards)  {
         cardRepository.updateByCardNo(cardNo,cards);
     }
 

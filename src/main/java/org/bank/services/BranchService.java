@@ -10,15 +10,15 @@ public class BranchService {
     private Connection connection= Connect.getInstance().getConnect();
     private BranchRepository branchRepository;
 
-    public BranchService() throws SQLException, ClassNotFoundException {
+    public BranchService()  {
         branchRepository= new BranchRepository(connection);
     }
 
-    public int getBranchId(String branchNo) throws SQLException {
+    public int getBranchId(String branchNo)  {
         return branchRepository.selectByBranchNo(branchNo).getId();
     }
 
-    public String getBranchNo(int branchId) throws SQLException {
+    public String getBranchNo(int branchId)  {
         return branchRepository.selectByBranchId(branchId).getBranchNo();
     }
 }

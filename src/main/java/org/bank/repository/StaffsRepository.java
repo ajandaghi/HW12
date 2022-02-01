@@ -34,7 +34,7 @@ public class StaffsRepository {
         }
     }
 
-    public void updateByStaffUser(String user, Staffs staffs) throws SQLException {
+    public void updateByStaffUser(String user, Staffs staffs)  {
         try {
             String updateSql = "update  staffs set " +
                     "fullName=?, pass=?, staffType=?::staffType, branchNo=? where  userId=?";

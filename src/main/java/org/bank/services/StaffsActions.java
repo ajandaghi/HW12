@@ -21,13 +21,13 @@ public class StaffsActions
 
 
 
-    public StaffsActions() throws SQLException, ClassNotFoundException {
+    public StaffsActions()  {
         staffsRepository=new StaffsRepository(connection);
         branchRepository=new BranchRepository(connection);
         customerService=new CustomerService();
     }
 
-    public void addBranchBoss(String user,String branchNo ) throws SQLException {
+    public void addBranchBoss(String user,String branchNo )  {
         if(getBranchIdByUser(user)!=branchRepository.selectByBranchNo(branchNo).getId()){
             System.out.println("this user doesn't work at branchNo: "+branchNo);
             return;
@@ -59,7 +59,7 @@ public class StaffsActions
         System.out.println("branch not exist");
 }
 
-public void addBranch(String branchNo, String branchName, String address) throws SQLException {
+public void addBranch(String branchNo, String branchName, String address)  {
    if(branchRepository.selectByBranchNo(branchNo)==null) {
        branchRepository.insert(new Branch(branchNo, branchName, address));
        System.out.println("branch added");
@@ -68,7 +68,7 @@ public void addBranch(String branchNo, String branchName, String address) throws
        System.out.println("This Branch Already Exists!");
 }
 
-public void addEmployee(String user, String pass, String fullName, int branchId) throws SQLException, ClassNotFoundException {
+public void addEmployee(String user, String pass, String fullName, int branchId)   {
     if(staffsRepository.selectByUser(user)==null && branchRepository.selectByBranchId(branchId)!=null) {
         staffsRepository.insert(new Staffs(user, fullName, pass, StaffType.Employee, branchRepository.selectByBranchId(branchId).getBranchNo() ));
         System.out.println("branch employee added!");
@@ -77,7 +77,7 @@ public void addEmployee(String user, String pass, String fullName, int branchId)
         System.out.println("user not exist or branch before added");
 }
 
-    public void addEmployee(String user, String pass, String fullName, String staffUser) throws SQLException, ClassNotFoundException {
+    public void addEmployee(String user, String pass, String fullName, String staffUser)  {
         if(staffsRepository.selectByUser(user)==null && branchRepository.selectByBranchId(getBranchIdByUser(staffUser))!=null) {
             staffsRepository.insert(new Staffs(user, fullName, pass, StaffType.Employee,branchRepository.selectByBranchId(getBranchIdByUser(staffUser) ).getBranchNo()));
             System.out.println("branch employee added!");
@@ -93,7 +93,7 @@ public void addEmployee(String user, String pass, String fullName, int branchId)
         return false;
     }
 
-    public StaffType login(String user, String pass) throws SQLException {
+    public StaffType login(String user, String pass)  {
         if(staffsRepository.selectByUser(user)!=null){
             if(staffsRepository.selectByUser(user).getUser().equals(user)&& staffsRepository.selectByUser(user).getPass().equals(pass)){
                 return staffsRepository.selectByUser(user).getStaffType();
@@ -107,7 +107,7 @@ public void addEmployee(String user, String pass, String fullName, int branchId)
 
     }
 
-    public int getBranchIdByUser(String user) throws SQLException {
+    public int getBranchIdByUser(String user)  {
         if(branchRepository.selectByBranchNo(staffsRepository.selectByUser(user).getBranchNo())!=null)
         return branchRepository.selectByBranchNo(staffsRepository.selectByUser(user).getBranchNo()).getId();
         else

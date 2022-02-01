@@ -16,13 +16,13 @@ public class AccountService {
     private BranchService branchService;
     private Connection connection= Connect.getInstance().getConnect();
 
-    public AccountService() throws SQLException, ClassNotFoundException {
+    public AccountService()  {
         accountRepository=new AccountRepository(connection);
         branchService=new BranchService();
         customerService= new CustomerService();
     }
 
-    public  void addAccount(String branchNo , AccountType accountType, String cUser) throws SQLException {
+    public  void addAccount(String branchNo , AccountType accountType, String cUser)  {
          if(customerService.selectCustomerByUser(cUser)==null){
              return;
          }
@@ -41,7 +41,7 @@ public class AccountService {
 
 
 
-    public void showAllAccount(String user) throws SQLException, ClassNotFoundException {
+    public void showAllAccount(String user)  {
          boolean isEmpty=true;
          StaffsActions staffsActions=new StaffsActions();
 
@@ -55,7 +55,7 @@ public class AccountService {
 
     }
 
-    public List<Account> selectByCustomerId(String user,int customerId) throws SQLException, ClassNotFoundException {
+    public List<Account> selectByCustomerId(String user,int customerId)  {
         StaffsActions staffsActions = new StaffsActions();
 
         if (!accountRepository.selectByCustomerId(customerId).isEmpty()) {
@@ -71,7 +71,7 @@ public class AccountService {
 
     }
 
-    public void deleteAccount(String accountNo) throws SQLException, ClassNotFoundException {
+    public void deleteAccount(String accountNo)  {
         if (accountRepository.selectByAccountNo(accountNo)!=null) {
             CardService cardService=new CardService();
             Cards card =cardService.selectCardByAccountId(accountRepository.selectByAccountNo(accountNo).getId());
@@ -88,15 +88,15 @@ public class AccountService {
 
 
 
-    public Account selectByAccountNo(String accountNo) throws SQLException {
+    public Account selectByAccountNo(String accountNo)  {
         return accountRepository.selectByAccountNo(accountNo);
     }
 
-    public void updateByAccountNo(String accountNo, Account account) throws SQLException {
+    public void updateByAccountNo(String accountNo, Account account)  {
         accountRepository.updateByAccountNo(accountNo,account);
     }
 
-    public Account selectAccountById(int id) throws SQLException {
+    public Account selectAccountById(int id)  {
 
         for (int i=0;i<accountRepository.select().size();i++){
             if(accountRepository.select().get(i).getId()==id) {
