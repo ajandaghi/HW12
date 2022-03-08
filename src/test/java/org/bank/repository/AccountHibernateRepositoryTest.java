@@ -103,7 +103,7 @@ class AccountHibernateRepositoryTest {
         accountHibernateRepository.delete(account1);
 
         // Assert
-        assertEquals(accountHibernateRepository.findAll().isEmpty(),true);
+        assertTrue(accountHibernateRepository.findAll().isEmpty());
     }
 
 

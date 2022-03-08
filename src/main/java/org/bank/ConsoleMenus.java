@@ -52,7 +52,7 @@ public class ConsoleMenus {
 
     private void showLoginMenu()  {
         System.out.println("select:");
-        System.out.println("-1.return main menu");
+        System.out.println("-1.return store.main menu");
         System.out.println("1.admin");
         System.out.println("2.staffs(Employee and Boss)");
         System.out.println("3.Customer");

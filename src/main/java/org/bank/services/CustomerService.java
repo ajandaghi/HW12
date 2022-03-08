@@ -48,13 +48,13 @@ public class CustomerService {
 
         if (customersRepository.selectByUser(user)!=null) {
             if(!customersRepository.selectByUser(user).getEnable()){
-                System.out.println("your customer service was diabled!");
+                System.out.println("your customer store.service was diabled!");
             }
             if (repeat==3){
                 Customers customer=customersRepository.selectByUser(user);
                 customer.setEnable(false);
                 customersRepository.updateByUser(user,customer);
-                System.out.println("your customer service is diabled!");
+                System.out.println("your customer store.service is diabled!");
                 return false;
             }
 
